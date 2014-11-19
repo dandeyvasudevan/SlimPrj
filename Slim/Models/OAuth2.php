@@ -59,7 +59,7 @@ class OAuth2 {
                     FROM  `oauth_consumers` oc,  `users` u
                     WHERE oc.user_id = u.id
                     AND u.username =  '".$userName."'
-                    AND u.password =  '".$password."'
+                    AND u.password =  '".md5($password)."'
                     AND oc.consumer_key =  '".$consumerKey."'
                     AND oc.enable_password_grant=1 AND u.active=1";
         
@@ -94,7 +94,7 @@ class OAuth2 {
             
         } else {
             $response["error"]  =   true;
-            $response["message"]=   "Couldn't create API key";
+            $response["message"]=   "Authentication Failed.";
         }
      
         return $response;
