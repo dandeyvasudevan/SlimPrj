@@ -1,0 +1,38 @@
+GET Watchlists:
+--------------------
+Displays all watchlists entries
+http://demoeappstech.uk/v1/watchlists  
+
+GET Watchlist:
+--------------------
+http://demoeappstech.uk/v1/watchlist/{watchlist-id}
+
+Eg: http://demoeappstech.uk/v1/watchlist/5
+
+POST Watchlist:
+---------------------
+We can create a new watchlist entry
+
+http://demoeappstech.uk/v1/watchlist
+
+Post data details:
+Request Content-Type (Header): Application/JSON
+Request Body Data:
+
+{"user_id":1, 
+ "instrument":"EUR_AGN",
+ "weekly":"bears",
+ "daily":"slight bullish pullback",
+ "candlestick":"strong bullish candle with upper wick",
+ "resistancemajor":1.4045,
+ "resistanceminor":2.0605,
+ "supportmajor": 1.2805,
+ "supportminor": 1.2944,
+ "notes": "AMSTERDAM MARKET - AGN"
+}
+
+Response:
+Header - 201 Created.
+
+
+
