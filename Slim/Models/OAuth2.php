@@ -87,6 +87,7 @@ class OAuth2 {
                                         ));
                 
                 $response["token"]      =   $access_token;
+                $response["userID"]     =   $userID;
             } catch (PDOException $e) {
                 $app->response()->status(400);
                 $app->response()->header('X-Status-Reason', $e->getMessage());
@@ -97,6 +98,28 @@ class OAuth2 {
             $response["message"]=   "Authentication Failed.";
         }
      
+        return $response;
+    }
+    
+    public static function logout($access_token, $userID){
+        if( $access_token ){
+            $sql = 'DELETE FROM oauth_access_tokens WHERE access_token = :access_token AND user_id = :userID';
+            
+            try {
+                $delete =   R::exec($sql, array("access_token"=>$access_token,
+                                                "userID"=>$userID
+                                                ));
+                
+                $response["message"]    =   true;
+                $response["error"]      =   false;
+            } catch (PDOException $e) {
+                $app->response()->status(400);
+                $app->response()->header('X-Status-Reason', $e->getMessage());
+            }
+        } else {
+            $response["error"]  =   true;
+        }
+        
         return $response;
     }
 }

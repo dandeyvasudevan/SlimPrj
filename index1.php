@@ -29,7 +29,7 @@ $dbName     =   $database['name'];
 R::setup('mysql:host='.$dbHost.';dbname='.$dbName.';',$dbUserName,$dbPassword);
 R::freeze(true);
 
-
+//echo '<br />Password:'.md5("dandey");
 
 //print_r( apache_request_headers() );
 //var_dump($_SERVER);
@@ -300,6 +300,15 @@ $app->get(
             //echo '<br />userName:'.$userName.', password:'.$password.', consumerKey:'.$consumerKey;
             $response   =   OAuth2::checkLogin($userName, $password, $consumerKey);
             
+            OAuth2::echoResponse(200, $response);
+        }
+);
+
+//Logic to logout the user
+$app->get(
+        '/'.$version.'/logout/:token/:userID',
+        function($token, $userID) use ($app) {
+            $response   =   OAuth2::logout($token, $userID);
             OAuth2::echoResponse(200, $response);
         }
 );
