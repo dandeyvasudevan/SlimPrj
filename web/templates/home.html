@@ -17,170 +17,18 @@
           <br />
           
             
-            <input type="button" id="btnAddWatchlist" name="btnAddWatchlist" value="Add Watchlist" ng-click="addWatchlist();" class="btn btn-default" /> <br /><br />
+            <input type="button" id="btnAddWatchlist" name="btnAddWatchlist" value="Add Watchlist" ng-click="addWatchlistItem();" class="btn btn-default" /> <br /><br />
             <div id="grid" class="gridStyle" ng-grid="gridOptions" style="width:900px;"></div>
             
-            
+            <!-- {{ routeParams.option }} -->
         </div>
     </div>
     
     <modal-dialog show='modalShown1' dialog-title='My Dialog' width='450px' height='60%'>
-        <h2 class="form-signin-heading">Watchlist Details</h2>
-        <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <td>Instrument</td>
-                    <td>:</td>
-                    <td>{{watchlist.instrument}}</td>
-                </tr>
-                <tr>
-                    <td>Daily</td>
-                    <td>:</td>
-                    <td>{{watchlist.daily}}</td>
-                </tr>
-                <tr>
-                    <td>Weekly</td>
-                    <td>:</td>
-                    <td>{{watchlist.weekly}}</td>
-                </tr>
-                <tr>
-                    <td>CandleStick</td>
-                    <td>:</td>
-                    <td>{{watchlist.candlestick}}</td>
-                </tr>
-                <tr>
-                    <td>CandleStick</td>
-                    <td>:</td>
-                    <td>{{watchlist.candlestick}}</td>
-                </tr>
-                <tr>
-                    <td>Resistence Major</td>
-                    <td>:</td>
-                    <td>{{watchlist.resistancemajor}}</td>
-                </tr>
-                <tr>
-                    <td>Resistence Minor</td>
-                    <td>:</td>
-                    <td>{{watchlist.resistanceminor}}</td>
-                </tr>
-                <tr>
-                    <td>Support Major</td>
-                    <td>:</td>
-                    <td>{{watchlist.supportmajor}}</td>
-                </tr>
-                <tr>
-                    <td>Support Minor</td>
-                    <td>:</td>
-                    <td>{{watchlist.supportminor}}</td>
-                </tr>
-                <tr>
-                    <td>Notes</td>
-                    <td>:</td>
-                    <td>{{watchlist.notes}}</td>
-                </tr>
-                <tr>
-                    <td>Date</td>
-                    <td>:</td>
-                    <td>{{watchlist.date}}</td>
-                </tr>
-            </tbody>
-        </table>
-        
+        <div ng-include src="'templates/watchlists/list.html'"></div>
     </modal-dialog>
     
     <modal-dialog show='modalShown2' dialog-title='Add Watchlist' width='450px' height='85%'>
-        <h2 class="form-signin-heading">Add Watchlist</h2>
-        
-        <form id="addWatchlist" name="addWatchlist" novalidate>
-            <!-- Instrument -->
-            <div class="form-group">
-                <label>Instrument</label>
-                <input type="text" name="instrument" class="form-control" ng-model="addWatchlist.ins" ng-pattern="/^([a-zA-Z]{3})+\_[a-zA-Z]{2,3}$/" required>
-                <p ng-show="addWatchlist.instrument.$invalid 
-                            && !addWatchlist.instrument.$pristine 
-                            && addWatchlist.instrument.$error.required" class="help-block">Instrument is required.</p>
-                <p ng-show="addWatchlist.instrument.$error.pattern">Enter Valid Format</p>
-            </div>
-            
-            <!-- Daily -->
-            <div class="form-group">
-                <label>Daily</label>
-                <input type="text" name="daily" class="form-control" ng-model="addWatchlist.dly" required>
-                <p ng-show="addWatchlist.daily.$invalid 
-                            && !addWatchlist.daily.$pristine 
-                            && addWatchlist.daily.$error.required" class="help-block">Daily is required.</p>
-            </div>
-            
-            <!-- Weekly -->
-            <div class="form-group">
-                <label>Weekly</label>
-                <input type="text" name="weekly" class="form-control" ng-model="addWatchlist.wkly" required>
-                <p ng-show="addWatchlist.weekly.$invalid 
-                            && !addWatchlist.weekly.$pristine 
-                            && addWatchlist.weekly.$error.required" class="help-block">Weekly is required.</p>
-            </div>
-            
-            <!-- Candlestick -->
-            <div class="form-group">
-                <label>CandleStick</label>
-                <input type="text" name="candlestick" class="form-control" ng-model="addWatchlist.cdlst" required>
-                <p ng-show="addWatchlist.candlestick.$invalid 
-                            && !addWatchlist.candlestick.$pristine 
-                            && addWatchlist.candlestick.$error.required" class="help-block">Candlestick is required.</p>
-            </div>
-            
-            <!-- Resistance Major -->
-            <div class="form-group">
-                <label>Resistance Major</label>
-                <input type="text" name="resistancemajor" class="form-control" ng-model="addWatchlist.resmaj" ng-pattern="/^\d{1,4}(\.\d{1,4})$/" required>
-                <p ng-show="addWatchlist.resistancemajor.$invalid 
-                            && !addWatchlist.resistancemajor.$pristine 
-                            && addWatchlist.resistancemajor.$error.required" class="help-block">Resistance Major is required.</p>
-                <p ng-show="addWatchlist.resistancemajor.$error.pattern">Enter Valid Format</p>
-            </div>
-            
-            <!-- Resistance Minor -->
-            <div class="form-group">
-                <label>Resistance Minor</label>
-                <input type="text" name="resistanceminor" class="form-control" ng-model="addWatchlist.resmin" ng-pattern="/^\d{1,4}(\.\d{1,4})$/" required>
-                <p ng-show="addWatchlist.resistanceminor.$invalid 
-                            && !addWatchlist.resistanceminor.$pristine 
-                            && addWatchlist.resistanceminor.$error.required" class="help-block">Resistance Minor is required.</p>
-                <p ng-show="addWatchlist.resistanceminor.$error.pattern">Enter Valid Format</p>
-            </div>
-            
-            <!-- Support Major -->
-            <div class="form-group">
-                <label>Support Major</label>
-                <input type="text" name="supportmajor" class="form-control" ng-model="addWatchlist.suppmaj" ng-pattern="/^\d{1,4}(\.\d{1,4})$/" required>
-                <p ng-show="addWatchlist.supportmajor.$invalid 
-                            && !addWatchlist.supportmajor.$pristine 
-                            && addWatchlist.supportmajor.$error.required" class="help-block">Support Major is required.</p>
-                <p ng-show="addWatchlist.supportmajor.$error.pattern">Enter Valid Format</p>
-            </div>
-            
-            <!-- Support Minor -->
-            <div class="form-group">
-                <label>Support Minor</label>
-                <input type="text" name="supportminor" class="form-control" ng-model="addWatchlist.suppmin" ng-pattern="/^\d{1,4}(\.\d{1,4})$/" required>
-                <p ng-show="addWatchlist.supportminor.$invalid 
-                            && !addWatchlist.supportminor.$pristine 
-                            && addWatchlist.supportminor.$error.required" class="help-block">Support Minor is required.</p>
-                <p ng-show="addWatchlist.supportminor.$error.pattern">Enter Valid Format</p>
-            </div>
-            
-            <!-- Notes -->
-            <div class="form-group">
-                <label>Notes</label>
-                <textarea name="notes" class="form-control" ng-model="addWatchlist.nt" required></textarea>
-                <p ng-show="addWatchlist.notes.$invalid 
-                            && !addWatchlist.notes.$pristine 
-                            && addWatchlist.notes.$error.required" class="help-block">Notes is required.</p>
-                
-            </div>
-            
-            <button type="submit" ng-click="submitForm(addWatchlist)" class="btn btn-primary" ng-disabled="addWatchlist.$invalid">Submit</button>
-        </form>
-        
+        <div ng-include src="'templates/watchlists/addEdit.html'"></div>
     </modal-dialog>
 </div>

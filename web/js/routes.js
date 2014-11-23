@@ -1,11 +1,14 @@
 var module = angular.module("sampleApp", ['ngRoute','ngGrid']);
 
 module.config(['$routeProvider',
-    function($routeProvider) {
+    function($routeProvider, $routeParams) {
         $routeProvider.
-            when('/home/watchlists', {
+            when('/home/:option', {
                 templateUrl: 'templates/home.html',
-                controller: 'HomeController'
+                /*templateUrl: function(params){
+                    return 'templates/'+params.option+'.html';
+                },*/
+                controller: 'HomeController',
             }).
             otherwise({
                 redirectTo: '/',
@@ -14,7 +17,7 @@ module.config(['$routeProvider',
             });
     }]);
 
-var restAPI = 'http://localhost/SlimPrj/v1/';
+var restAPI = 'http://localhost/Slim-master/v1/';
 //var restAPI = 'http://demoeappstech.uk/v1/';
 
 module.controller("RouteController", function($scope, $routeParams) {
@@ -22,7 +25,7 @@ module.controller("RouteController", function($scope, $routeParams) {
 });
 
 module.controller("LoginController", 
-    function($rootScope, $scope, $location, $http, $window){
+    function($rootScope, $scope, $location, $http, $window, $routeParams){
    
     $scope.login = function() {
        //alert('login username:'+$scope.username+', password:'+$scope.password);
@@ -48,8 +51,9 @@ module.controller("LoginController",
 });
 
 module.controller("HomeController",
-    function($rootScope, $scope, $location, $http, $window){
+    function($rootScope, $scope, $location, $http, $window, $routeParams){
         $scope.title = 'Watch Lists';
+        $scope.routeParams = $routeParams;
         
         $scope.displayWatchlists = function() {
                 $http.get(restAPI+'watchlists',
@@ -75,12 +79,17 @@ module.controller("HomeController",
                                          },
                                          {field:'id', displayName:'Delete',
                                              cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><a ng-click="removeById(row)">Delete</a></div>'
+                                         },
+                                         {field:'id', displayName:'Edit',
+                                             cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><a ng-click="editById(row)">Edit</a></div>'
                                          }
                                         ]
                         }; 
                         
                         
         };       
+        
+        $scope.watchlist = {};
         
         $scope.loadById = function(row) {  
             window.console && console.log(row.entity);
@@ -101,6 +110,28 @@ module.controller("HomeController",
                             $scope.displayWatchlists();
                         });
         }   
+        
+        $scope.editById = function(row){
+            console.log($scope.addWatchlist);
+            var original = $scope.watchlist;
+            
+            var data = row.entity;
+            
+            $scope.watchlist = {};
+            
+            $scope.watchlist.ins    =   row.entity.instrument;
+            $scope.watchlist.dly    =   row.entity.daily;
+            $scope.watchlist.wkly   =   row.entity.weekly;
+            $scope.watchlist.cdlst  =   row.entity.candlestick;
+            $scope.watchlist.resmaj =   row.entity.resistancemajor;
+            $scope.watchlist.resmin =   row.entity.resistanceminor;
+            $scope.watchlist.suppmaj=   row.entity.supportmajor;
+            $scope.watchlist.suppmin=   row.entity.supportminor;
+            $scope.watchlist.nt     =   row.entity.notes;
+            $scope.watchlist.id     =   row.entity.id;
+            $scope.action = "Edit";
+            $scope.modalShown2 = true;
+        };
         
         $scope.logout = function() {
             var localStorage = $window.sessionStorage;
@@ -123,18 +154,24 @@ module.controller("HomeController",
             $scope.watchlist = $entity;
         };
   
-        $scope.addWatchlist = function(){
+        
+        $scope.addWatchlistItem = function(){
+            $scope.watchlist = {};
+            $scope.action = "Add";
             $scope.modalShown2 = !$scope.modalShown2;
         }
         
         $scope.submitForm = function(form) {
             $scope.lst = {};    
-            window.console && console.log(JSON.stringify(form.ins));
-            window.console && console.log(JSON.stringify(form.nt));
-            window.console && console.log(form.ins);
+            //window.console && console.log(JSON.stringify(form.ins));
+            //window.console && console.log(JSON.stringify(form.nt));
+            //window.console && console.log(form.ins);
             
-            $scope.lst.user_id = $window.sessionStorage.userID;
-            //$scope.lst.push({date: });
+            var dt  = new Date();
+            var dt1 = dt.getFullYear()+'-'+parseInt(dt.getMonth()+1)+'-'+dt.getDate();
+            
+            $scope.lst.user_id  = $window.sessionStorage.userID;
+            $scope.lst.date     = dt1.toString();
             $scope.lst.instrument = form.ins;
             $scope.lst.weekly   = form.wkly;
             $scope.lst.daily    = form.dly;
@@ -144,9 +181,15 @@ module.controller("HomeController",
             $scope.lst.supportmajor = form.suppmaj;
             $scope.lst.supportminor = form.suppmin;
             $scope.lst.notes = form.nt;
-            window.console && console.log(JSON.stringify($scope.lst));
+            //window.console && console.log(JSON.stringify($scope.lst));
             
-            $scope.saveData('watchlists', JSON.stringify($scope.lst));
+            //window.console && console.log(form.id);
+            if( form.id ) {
+                //alert('update');
+                $scope.updateData('watchlists', JSON.stringify($scope.lst), form.id);
+            } else {
+                $scope.saveData('watchlists', JSON.stringify($scope.lst));
+            }
         };
         
         $scope.saveData = function(model, data) {
@@ -154,8 +197,24 @@ module.controller("HomeController",
                         {headers: {'Authorizationtoken': 'Bearer '+$window.sessionStorage.token}
                        }).
                        success(function(data,status, header, config) {
-                            console.log( data );
-                            console.log( header );
+                            //console.log( data );
+                            //console.log( header );
+                            //$scope.watchlist = {};
+                            
+                            $scope.modalShown2 = false;
+                            //$scope.watchlist.ins.$setValidity(false);
+                            $scope.displayWatchlists();
+                        });
+        };
+        
+        $scope.updateData = function(model, data, id){
+            $http.put(restAPI+model+'/'+id, data,
+                        {headers: {'Authorizationtoken': 'Bearer '+$window.sessionStorage.token}
+                       }).
+                       success(function(data,status, header, config) {
+                            //console.log( data );
+                            //console.log( header );
+                            $scope.watchlist = {};
                             $scope.modalShown2 = false;
                             $scope.displayWatchlists();
                         });
